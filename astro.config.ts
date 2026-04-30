@@ -1,7 +1,11 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import { wikilinkPlugin } from './src/lib/wikilinks.ts';
+import { wikilinkPlugin, buildPluginSlugMapFromFs } from './src/lib/wikilinks.ts';
+
+// Build the slug map once at config time (main process context, correct cwd).
+// This is passed to the remark plugin via options so it's available at render time.
+const slugMap = buildPluginSlugMapFromFs();
 
 export default defineConfig({
   site: 'https://vidip.dev',
@@ -12,9 +16,9 @@ export default defineConfig({
     service: { entrypoint: 'astro/assets/services/noop' },
   },
   markdown: {
-    remarkPlugins: [wikilinkPlugin],
+    remarkPlugins: [[wikilinkPlugin, { slugMap }]],
     shikiConfig: {
-      theme: 'gruvbox-dark-hard',
+      theme: 'vitesse-dark',
       wrap: false,
     },
   },
