@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects
+
+# Redirect old /blog/* paths if migrating from a previous blog setup
+/blog/*  /garden/:splat  301
+
+# 404 fallback handled by Astro's static 404.astro

@@ -1,0 +1,39 @@
+# Cloudflare Pages response headers
+
+# Immutable assets — content-hashed filenames, safe to cache forever
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Self-hosted fonts — immutable (update filename to bust cache)
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Static JS in public/ (burger-menu.js etc.) — long cache, not immutable
+/burger-menu.js
+  Cache-Control: public, max-age=604800
+
+# RSS feed — revalidate frequently
+/rss.xml
+  Cache-Control: public, max-age=3600
+  Content-Type: application/rss+xml; charset=utf-8
+
+# PDF resume — daily cache
+/resume.pdf
+  Cache-Control: public, max-age=86400
+  Content-Disposition: inline; filename="resume.pdf"
+
+# Sitemap
+/sitemap-index.xml
+/sitemap-*.xml
+  Cache-Control: public, max-age=3600
+
+# HTML pages — always revalidate (stale-while-revalidate for perceived speed)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Security headers for all responses
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

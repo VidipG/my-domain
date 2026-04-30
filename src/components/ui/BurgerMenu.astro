@@ -1,0 +1,88 @@
+---
+/**
+ * BurgerMenu — slide-in navigation overlay.
+ *
+ * Implemented as a vanilla custom element (<burger-menu>) with no framework
+ * dependency. The script is loaded async so it never blocks rendering.
+ *
+ * The HTML/CSS shell renders a fully functional (if non-interactive) nav
+ * immediately; the JS enhances it.
+ */
+---
+<burger-menu>
+  <!-- Toggle button -->
+  <button
+    data-toggle
+    aria-label="Toggle navigation"
+    aria-expanded="false"
+    aria-controls="burger-nav"
+    class="fixed top-4 right-4 z-50 flex flex-col gap-1.5 p-2 rounded cursor-pointer bg-gruv-bg1 border border-gruv-bg2 hover:border-gruv-bg3 transition-colors"
+  >
+    <span class="block w-5 h-0.5 bg-gruv-fg transition-transform duration-200 origin-center" data-line="1"></span>
+    <span class="block w-5 h-0.5 bg-gruv-fg transition-opacity duration-200"                  data-line="2"></span>
+    <span class="block w-5 h-0.5 bg-gruv-fg transition-transform duration-200 origin-center" data-line="3"></span>
+  </button>
+
+  <!-- Overlay backdrop -->
+  <div
+    data-backdrop
+    class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Navigation drawer -->
+  <nav
+    id="burger-nav"
+    data-nav
+    aria-hidden="true"
+    class="fixed top-0 right-0 z-40 h-full w-64 bg-gruv-bg1 border-l border-gruv-bg2 translate-x-full transition-transform duration-200 ease-out flex flex-col pt-16 px-6"
+  >
+    <ul class="flex flex-col gap-1 text-lg">
+      <li>
+        <a href="/"        class="nav-link">Home</a>
+      </li>
+      <li>
+        <a href="/garden"  class="nav-link">Garden</a>
+      </li>
+      <li>
+        <a href="/resume"  class="nav-link">Resume</a>
+      </li>
+      <li>
+        <a href="/uses"    class="nav-link">Uses</a>
+      </li>
+      <li>
+        <a href="/rss.xml" class="nav-link">RSS</a>
+      </li>
+    </ul>
+
+    <div class="mt-auto pb-8 flex gap-4">
+      <a href="https://github.com/vidipgg"  rel="noopener noreferrer" class="text-gruv-fg4 hover:text-gruv-fg transition-colors text-sm">GitHub</a>
+      <a href="https://bsky.app"            rel="noopener noreferrer" class="text-gruv-fg4 hover:text-gruv-fg transition-colors text-sm">Bluesky</a>
+    </div>
+  </nav>
+</burger-menu>
+
+<style>
+  .nav-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    color: var(--color-gruv-fg);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-link:hover {
+    background: var(--color-gruv-bg2);
+    color: var(--color-gruv-yellow-b);
+  }
+
+  /* Open state — applied by BurgerMenu.ts via data-open attribute */
+  burger-menu[data-open] [data-line="1"] { transform: rotate(45deg) translate(3px, 3px); }
+  burger-menu[data-open] [data-line="2"] { opacity: 0; }
+  burger-menu[data-open] [data-line="3"] { transform: rotate(-45deg) translate(3px, -3px); }
+  burger-menu[data-open] [data-backdrop] { opacity: 1; pointer-events: auto; }
+  burger-menu[data-open] [data-nav]      { transform: translateX(0); }
+</style>
+
+<!-- Non-blocking enhancement -->
+<script is:inline src="/burger-menu.js" type="module" async></script>

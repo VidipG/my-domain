@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  backlinks: Array<{
+    id:   string;
+    data: Pick<CollectionEntry<'notes'>['data'], 'title' | 'description' | 'type'>;
+  }>;
+}
+
+const { backlinks } = Astro.props;
+
+const TYPE_COLOR: Record<string, string> = {
+  til:       'text-gruv-blue-b',
+  technical: 'text-gruv-green-b',
+  longform:  'text-gruv-yellow-b',
+};
+---
+<aside class="mt-12 pt-6 border-t border-gruv-bg2">
+  <h2 class="text-xs text-gruv-fg4 uppercase tracking-widest mb-4">
+    Linked from ({backlinks.length})
+  </h2>
+  <ul class="flex flex-col gap-3">
+    {backlinks.map((note) => (
+      <li>
+        <a
+          href={`/garden/${note.id}/`}
+          class="group flex flex-col gap-0.5 rounded border border-gruv-bg2 bg-gruv-bg1 px-4 py-3 hover:border-gruv-bg3 transition-colors"
+        >
+          <span class="flex items-center gap-2">
+            <span class={`text-xs font-mono uppercase tracking-widest ${TYPE_COLOR[note.data.type] ?? 'text-gruv-fg4'}`}>
+              {note.data.type}
+            </span>
+            <span class="text-gruv-fg font-medium group-hover:text-gruv-blue-b transition-colors">
+              {note.data.title}
+            </span>
+          </span>
+          <span class="text-gruv-fg4 text-sm line-clamp-1">{note.data.description}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</aside>

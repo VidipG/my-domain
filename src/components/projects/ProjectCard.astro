@@ -1,0 +1,47 @@
+---
+import TagBadge from '@/components/garden/TagBadge.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, tags, date, url } = project.data;
+
+const formatted = date.toLocaleDateString('en-US', {
+  year:  'numeric',
+  month: 'short',
+});
+---
+<li style="width:100%;">
+  <a
+    href={`/projects/${project.id}/`}
+    class="group block rounded-[var(--radius)] px-4 py-3 transition-shadow"
+    style="box-shadow: 0 1px 3px rgba(0,0,0,0.25); width:100%; box-sizing:border-box;"
+  >
+    <div class="flex items-center gap-2 mb-1.5 text-xs">
+      <time datetime={date.toISOString()} class="text-gruv-fg4 font-mono">{formatted}</time>
+      {url && (
+        <span class="ml-auto text-gruv-fg4 font-mono text-xs opacity-60">↗ external</span>
+      )}
+    </div>
+
+    <h3 class="text-gruv-fg font-semibold group-hover:text-gruv-yellow-b transition-colors leading-snug mb-1">
+      {title}
+    </h3>
+
+    <p class="text-gruv-fg4 text-sm leading-relaxed line-clamp-2 mb-2">
+      {description}
+    </p>
+
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5 mt-2">
+        {tags.slice(0, 4).map((t) => <TagBadge tag={t} />)}
+        {tags.length > 4 && (
+          <span class="text-xs text-gruv-fg4">+{tags.length - 4}</span>
+        )}
+      </div>
+    )}
+  </a>
+</li>

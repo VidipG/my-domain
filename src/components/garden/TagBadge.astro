@@ -1,0 +1,15 @@
+---
+interface Props {
+  tag: string;
+  /** When true, wrap in an anchor linking to a tag filter (future feature) */
+  linked?: boolean;
+}
+
+const { tag, linked = false } = Astro.props;
+
+const cls = 'inline-flex items-center text-xs font-mono text-gruv-yellow bg-gruv-bg1 px-2 py-0.5 rounded';
+---
+{linked
+  ? <a href={`/garden/tag/${tag}/`} class={`${cls} hover:text-gruv-yellow-b transition-colors`}>#{tag}</a>
+  : <span class={cls}>#{tag}</span>
+}

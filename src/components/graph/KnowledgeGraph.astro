@@ -1,0 +1,30 @@
+---
+/**
+ * KnowledgeGraph — force-graph island.
+ *
+ * Renders a container div; force-graph appends its own <canvas> inside it.
+ * The custom element uses IntersectionObserver so it only initialises when visible.
+ */
+import type { GraphData } from '@/lib/graph';
+
+interface Props {
+  data: GraphData;
+  width?:  number;
+  height?: number;
+}
+
+const { data, width = 560, height = 480 } = Astro.props;
+const serialised = JSON.stringify(data);
+---
+<knowledge-graph
+  data-graph={serialised}
+  data-width={width}
+  data-height={height}
+  style={`display:block;width:${width}px;height:${height}px;max-width:100%;`}
+>
+  <!-- force-graph mounts its own canvas here at runtime -->
+</knowledge-graph>
+
+<script>
+  import './KnowledgeGraph.ts';
+</script>

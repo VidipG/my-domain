@@ -1,0 +1,68 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const categories = [
+  {
+    title: 'Editor & Terminal',
+    items: [
+      { name: 'Neovim',       detail: 'Primary editor — config in Lua, tree-sitter, LSP.' },
+      { name: 'WezTerm',      detail: 'GPU-accelerated terminal emulator, multiplexing built-in.' },
+      { name: 'Fish shell',   detail: 'Interactive shell. Zoxide + fzf for navigation.' },
+    ],
+  },
+  {
+    title: 'Hardware',
+    items: [
+      { name: 'MacBook Pro M4',   detail: '14", 32GB RAM. Primary machine.' },
+      { name: 'LG 27UK850',        detail: '4K USB-C monitor.' },
+      { name: 'Keychron Q1 Pro',   detail: 'Wireless mechanical — Gateron G Pro Browns.' },
+    ],
+  },
+  {
+    title: 'Software',
+    items: [
+      { name: 'Raycast',          detail: 'App launcher, clipboard, snippets.' },
+      { name: 'Obsidian',         detail: 'Local-first markdown notes (synced to this garden).' },
+      { name: 'Pika',             detail: 'Colour picker.' },
+    ],
+  },
+  {
+    title: 'This site',
+    items: [
+      { name: 'Astro 6',          detail: 'Static site generator. Zero-JS by default.' },
+      { name: 'Tailwind CSS v4',  detail: 'Lightning CSS, native @theme variables.' },
+      { name: 'Cloudflare Pages', detail: 'Global CDN, HTTP/3, immutable asset caching.' },
+    ],
+  },
+];
+---
+<PageLayout title="Uses" description="Hardware, software, and tools in my daily workflow.">
+  <main style="max-width:48rem; margin:0 auto; padding:4rem 3rem;">
+    <nav class="text-sm mb-6">
+      <a href="/" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Home</a>
+      <span class="text-gruv-bg3 mx-2">/</span>
+      <span class="text-gruv-fg">Uses</span>
+    </nav>
+
+    <h1 class="text-4xl font-bold text-gruv-fg mb-2">Uses</h1>
+    <p class="text-gruv-fg4 text-lg mb-12">Tools and setup in my daily workflow.</p>
+
+    <div class="flex flex-col gap-12">
+      {categories.map(({ title, items }) => (
+        <section>
+          <h2 class="text-gruv-yellow-b font-semibold text-lg mb-5 pb-2 border-b border-gruv-bg2">
+            {title}
+          </h2>
+          <dl class="flex flex-col gap-4">
+            {items.map(({ name, detail }) => (
+              <div class="grid grid-cols-[180px_1fr] gap-4">
+                <dt class="text-gruv-fg font-mono text-sm pt-0.5">{name}</dt>
+                <dd class="text-gruv-fg4 text-sm leading-relaxed">{detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))}
+    </div>
+  </main>
+</PageLayout>

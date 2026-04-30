@@ -1,0 +1,66 @@
+---
+import MaturityBadge from './MaturityBadge.astro';
+import TagBadge from './TagBadge.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+  /** Show full description (default) or compact one-liner */
+  compact?: boolean;
+}
+
+const { note, compact = false } = Astro.props;
+const { title, description, type, maturity, tags, date } = note.data;
+
+const tended = date.toLocaleDateString('en-US', {
+  year:  'numeric',
+  month: 'short',
+  day:   'numeric',
+});
+
+const TYPE_COLOR: Record<string, string> = {
+  til:       'text-gruv-blue-b',
+  technical: 'text-gruv-green-b',
+  freeform:  'text-gruv-yellow-b',
+};
+---
+<li style="width:100%;">
+  <a
+    href={`/garden/${note.id}/`}
+    class="group block rounded-[var(--radius)] px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
+    style="box-shadow: 0 1px 3px rgba(0,0,0,0.25); width:100%; box-sizing:border-box;"
+  >
+    <!-- Top row: type label + maturity + date -->
+    <div class="flex items-center gap-2 mb-1.5 text-xs">
+      <span class={`font-mono uppercase tracking-widest ${TYPE_COLOR[type] ?? 'text-gruv-fg4'}`}>
+        {type}
+      </span>
+      <MaturityBadge maturity={maturity} />
+      <time datetime={date.toISOString()} class="ml-auto text-gruv-fg4">
+        {tended}
+      </time>
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-gruv-fg font-semibold group-hover:text-gruv-yellow-b transition-colors leading-snug mb-1">
+      {title}
+    </h3>
+
+    <!-- Description -->
+    {!compact && (
+      <p class="text-gruv-fg4 text-sm leading-relaxed line-clamp-2 mb-2">
+        {description}
+      </p>
+    )}
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5 mt-2">
+        {tags.slice(0, 3).map((t) => <TagBadge tag={t} />)}
+        {tags.length > 3 && (
+          <span class="text-xs text-gruv-fg4">+{tags.length - 3}</span>
+        )}
+      </div>
+    )}
+  </a>
+</li>

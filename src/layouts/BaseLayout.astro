@@ -1,0 +1,78 @@
+---
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Canonical URL for this page (defaults to Astro.url) */
+  canonical?: string;
+  /** OG image URL */
+  ogImage?: string;
+  /** Suppress the default RSS autodiscovery link */
+  noRss?: boolean;
+}
+
+const {
+  title,
+  description = 'A digital garden of notes, ideas, and things I\'m learning.',
+  canonical = Astro.url.href,
+  ogImage,
+  noRss = false,
+} = Astro.props;
+
+const siteName = 'vidip.dev';
+const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary meta -->
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url"         content={canonical} />
+    <meta property="og:site_name"   content={siteName} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:title"       content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Fonts — preload the two subset WOFF2 files -->
+    <link rel="preload" href="/fonts/inter-var.woff2"    as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jb-mono-var.woff2"  as="font" type="font/woff2" crossorigin />
+
+    <!-- RSS autodiscovery -->
+    {!noRss && (
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title={`${siteName} — Garden RSS`}
+        href="/rss.xml"
+      />
+    )}
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Per-page head additions (OG images, modulepreloads, etc.) -->
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

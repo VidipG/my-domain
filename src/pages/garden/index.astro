@@ -1,0 +1,251 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@/layouts/PageLayout.astro';
+import NoteCard from '@/components/garden/NoteCard.astro';
+import type { NoteType } from '../../content.config.ts';
+
+const allNotes = await getCollection('notes', (n) => !n.data.draft);
+
+const sorted = [...allNotes].sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Tags sorted by frequency across all notes
+const tagFreq: Record<string, number> = {};
+for (const note of sorted) {
+  for (const tag of note.data.tags) {
+    tagFreq[tag] = (tagFreq[tag] ?? 0) + 1;
+  }
+}
+const topics = Object.entries(tagFreq)
+  .sort((a, b) => b[1] - a[1])
+  .map(([tag]) => tag);
+
+const countByType: Record<NoteType, number> = { til: 0, technical: 0, freeform: 0 };
+for (const n of allNotes) countByType[n.data.type]++;
+
+// Per-note data for client-side filtering
+const noteDataMap = Object.fromEntries(
+  sorted.map((n) => [n.id, { type: n.data.type, tags: n.data.tags }])
+);
+---
+<PageLayout
+  title="Garden"
+  description="A digital garden of notes, ideas, and things I'm learning."
+>
+  <main style="max-width:72rem; margin:0 auto; padding:4rem 3rem;">
+
+    <header style="margin-bottom:2.5rem;">
+      <nav class="text-sm" style="margin-bottom:1.5rem;">
+        <a href="/" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Home</a>
+        <span class="text-gruv-bg3 mx-2">/</span>
+        <span class="text-gruv-fg">Garden</span>
+      </nav>
+
+      <h1 class="text-4xl font-bold text-gruv-fg" style="margin-bottom:0.5rem;">Garden</h1>
+      <p class="text-gruv-fg4 text-lg" style="margin-bottom:2rem; max-width:36rem;">
+        A collection of notes, ideas, and things I'm learning.
+      </p>
+
+      <!-- Type filters — no per-type colour on inactive buttons -->
+      <div role="group" aria-label="Filter by type" style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <button data-type=""          class="filter-btn filter-btn--active">All <span class="opacity-60">({allNotes.length})</span></button>
+        <button data-type="til"       class="filter-btn">TIL <span class="opacity-60">({countByType.til})</span></button>
+        <button data-type="technical" class="filter-btn">Technical <span class="opacity-60">({countByType.technical})</span></button>
+        <button data-type="freeform"  class="filter-btn">Freeform <span class="opacity-60">({countByType.freeform})</span></button>
+      </div>
+    </header>
+
+    <div style="display:grid; grid-template-columns:1fr 200px; gap:3rem; align-items:start;">
+
+      <!-- Notes list -->
+      <section style="min-width:0; width:100%;">
+        <h2 class="text-xs text-gruv-fg4 uppercase tracking-widest" style="margin-bottom:1.25rem;">
+          Recently Tended
+        </h2>
+        <ul id="notes-list" style="display:flex; flex-direction:column; gap:1.25rem; width:100%;">
+          {sorted.map((note) => <NoteCard note={note} />)}
+        </ul>
+        <p id="empty-msg" class="hidden text-sm text-gruv-fg4" style="margin-top:1.5rem;">No notes match this filter.</p>
+      </section>
+
+      <!-- Sidebar -->
+      <aside style="position:sticky; top:2rem; display:flex; flex-direction:column; gap:2.5rem;">
+
+        <!-- By Topic -->
+        <div>
+          <p class="text-xs text-gruv-fg4 uppercase tracking-widest" style="margin-bottom:0.75rem;">By Topic</p>
+          <ul id="topic-list" style="display:flex; flex-direction:column; gap:0.25rem;">
+            {topics.map((tag) => (
+              <li data-tag={tag}>
+                <button
+                  data-topic={tag}
+                  class="topic-btn text-left w-full font-mono text-sm px-2 py-1 rounded transition-colors text-gruv-fg4 hover:text-gruv-yellow"
+                >
+                  #{tag}
+                  <span class="opacity-50 ml-1 text-xs" data-count>({tagFreq[tag]})</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Maturity legend -->
+        <div>
+          <p class="text-xs text-gruv-fg4 uppercase tracking-widest" style="margin-bottom:0.75rem;">Maturity</p>
+          <ul style="display:flex; flex-direction:column; gap:0.6rem;">
+            <li style="display:flex; align-items:baseline; gap:0.5rem;">
+              <span class="text-xs font-mono text-gruv-green">🌱 Seedling</span>
+            </li>
+            <li class="text-xs text-gruv-fg4" style="padding-left:0.25rem; line-height:1.4;">
+              Rough idea, early notes — may be incomplete.
+            </li>
+            <li style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.5rem;">
+              <span class="text-xs font-mono text-gruv-yellow">🌿 Budding</span>
+            </li>
+            <li class="text-xs text-gruv-fg4" style="padding-left:0.25rem; line-height:1.4;">
+              Taking shape, still developing.
+            </li>
+            <li style="display:flex; align-items:baseline; gap:0.5rem; margin-top:0.5rem;">
+              <span class="text-xs font-mono text-gruv-aqua-b">🌲 Evergreen</span>
+            </li>
+            <li class="text-xs text-gruv-fg4" style="padding-left:0.25rem; line-height:1.4;">
+              Complete and considered — stable enough to share.
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+
+  </main>
+</PageLayout>
+
+<script is:inline define:vars={{ noteDataMap }}>
+  const listEl   = document.getElementById('notes-list');
+  const emptyMsg = document.getElementById('empty-msg');
+
+  const noteItems = listEl
+    ? Array.from(listEl.querySelectorAll('li')).map((li) => {
+        const a = li.querySelector('a');
+        const href = a?.getAttribute('href') ?? '';
+        const id = href.replace(/^\/garden\//, '').replace(/\/$/, '');
+        return { li, id };
+      })
+    : [];
+
+  let activeType = '';
+  let activeTag  = '';
+
+  function applyFilters() {
+    let visible = 0;
+    for (const { li, id } of noteItems) {
+      const data = noteDataMap[id] ?? { type: '', tags: [] };
+      const typeOk = !activeType || data.type === activeType;
+      const tagOk  = !activeTag  || data.tags.includes(activeTag);
+      const show = typeOk && tagOk;
+      li.style.display = show ? '' : 'none';
+      if (show) visible++;
+    }
+    if (emptyMsg) emptyMsg.classList.toggle('hidden', visible > 0);
+  }
+
+  // Recompute which tags appear in the current type-filtered set
+  function updateTopicSidebar() {
+    // Count tags among type-filtered notes
+    const tagCounts = {};
+    for (const { id } of noteItems) {
+      const data = noteDataMap[id] ?? { type: '', tags: [] };
+      if (activeType && data.type !== activeType) continue;
+      for (const tag of data.tags) {
+        tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
+      }
+    }
+
+    // Show/hide topic rows; if active tag disappears, deselect it
+    document.querySelectorAll('#topic-list li[data-tag]').forEach((li) => {
+      const tag = li.dataset.tag ?? '';
+      const count = tagCounts[tag] ?? 0;
+      li.style.display = count > 0 ? '' : 'none';
+
+      const countEl = li.querySelector('[data-count]');
+      if (countEl) countEl.textContent = `(${count})`;
+
+      if (count === 0 && activeTag === tag) {
+        activeTag = '';
+        li.querySelector('.topic-btn')?.classList.remove('topic-btn--active');
+      }
+    });
+  }
+
+  // Type filter buttons
+  document.querySelectorAll('[data-type]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeType = btn.dataset.type ?? '';
+      // Reset tag filter when type changes
+      activeTag = '';
+      document.querySelectorAll('.topic-btn').forEach((b) => b.classList.remove('topic-btn--active'));
+
+      document.querySelectorAll('[data-type]').forEach((b) => b.classList.remove('filter-btn--active'));
+      btn.classList.add('filter-btn--active');
+
+      updateTopicSidebar();
+      applyFilters();
+    });
+  });
+
+  // Topic filter buttons
+  document.querySelectorAll('.topic-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.topic ?? '';
+      if (activeTag === tag) {
+        activeTag = '';
+        btn.classList.remove('topic-btn--active');
+      } else {
+        activeTag = tag;
+        document.querySelectorAll('.topic-btn').forEach((b) => b.classList.remove('topic-btn--active'));
+        btn.classList.add('topic-btn--active');
+      }
+      applyFilters();
+    });
+  });
+</script>
+
+<style>
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-width: 8rem;
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-gruv-bg2);
+    background: var(--color-gruv-bg1);
+    color: var(--color-gruv-fg4);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .filter-btn:hover {
+    border-color: var(--color-gruv-bg3);
+    color: var(--color-gruv-fg);
+  }
+  .filter-btn--active {
+    border-color: var(--color-gruv-yellow);
+    color: var(--color-gruv-yellow-b) !important;
+  }
+
+  .topic-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .topic-btn--active {
+    color: var(--color-gruv-yellow) !important;
+  }
+  .topic-btn:hover {
+    background: var(--color-gruv-bg1);
+  }
+</style>

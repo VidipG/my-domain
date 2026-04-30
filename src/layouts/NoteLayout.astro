@@ -1,0 +1,161 @@
+---
+/**
+ * NoteLayout — wraps a garden note with:
+ *  - Note header (type badge, maturity, tended date, tags)
+ *  - Prose content slot
+ *  - Table of contents (if headings provided)
+ *  - Backlinks panel
+ *  - POSSE syndication footer
+ */
+import BaseLayout from './BaseLayout.astro';
+import MaturityBadge from '@/components/garden/MaturityBadge.astro';
+import TagBadge from '@/components/garden/TagBadge.astro';
+import BacklinkPanel from '@/components/garden/BacklinkPanel.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Heading {
+  depth: number;
+  slug:  string;
+  text:  string;
+}
+
+interface NoteEntry {
+  id:   string;
+  data: CollectionEntry<'notes'>['data'];
+}
+
+interface Props {
+  note:      NoteEntry;
+  headings:  Heading[];
+  backlinks: NoteEntry[];
+}
+
+const { note, headings, backlinks } = Astro.props;
+const { title, date, description, maturity, tags, type, syndication } = note.data;
+
+const tended = date.toLocaleDateString('en-US', {
+  year:  'numeric',
+  month: 'short',
+  day:   'numeric',
+});
+
+const TYPE_LABELS: Record<string, string> = {
+  til:       'TIL',
+  technical: 'Technical',
+  freeform:  'Freeform',
+};
+
+// Only show ToC for headings at depth 2 or 3 if there are ≥ 2
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const showToc = tocHeadings.length >= 2;
+---
+<BaseLayout {title} {description} canonical={`${Astro.site}garden/${note.id}/`}>
+  <div style="max-width:56rem; margin:0 auto; padding:4rem 3rem;">
+    <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-16">
+
+      <!-- ── Main content ──────────────────────────────────── -->
+      <article>
+        <!-- Header -->
+        <header class="mb-10">
+          <!-- Breadcrumb -->
+          <nav class="text-sm mb-4">
+            <a href="/" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Home</a>
+            <span class="text-gruv-bg3 mx-2">/</span>
+            <a href="/garden" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Garden</a>
+            <span class="text-gruv-bg3 mx-2">/</span>
+            <span class="text-gruv-fg4">{title}</span>
+          </nav>
+
+          <!-- Type + maturity row -->
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-gruv-blue-b">
+              {TYPE_LABELS[type] ?? type}
+            </span>
+            <MaturityBadge maturity={maturity} />
+            <time
+              datetime={date.toISOString()}
+              class="text-xs text-gruv-fg4 ml-auto"
+            >
+              Tended {tended}
+            </time>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-bold text-gruv-fg leading-tight mb-4">
+            {title}
+          </h1>
+
+          <p class="text-gruv-fg4 text-lg mb-5">{description}</p>
+
+          <!-- Tags -->
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {tags.map((t) => <TagBadge tag={t} />)}
+            </div>
+          )}
+        </header>
+
+        <!-- Note body -->
+        <div class="prose">
+          <slot />
+        </div>
+
+        <!-- Backlinks -->
+        {backlinks.length > 0 && <BacklinkPanel backlinks={backlinks} />}
+
+        <!-- POSSE syndication links -->
+        {syndication && (
+          <aside class="mt-10 pt-6 border-t border-gruv-bg2 text-sm">
+            <p class="text-gruv-fg4 mb-2">Also on:</p>
+            <ul class="flex flex-wrap gap-4">
+              {syndication.bluesky  && (
+                <li>
+                  <a href={syndication.bluesky}  class="text-gruv-blue-b hover:underline" rel="me noopener">
+                    Bluesky
+                  </a>
+                </li>
+              )}
+              {syndication.mastodon && (
+                <li>
+                  <a href={syndication.mastodon} class="text-gruv-blue-b hover:underline" rel="me noopener">
+                    Mastodon
+                  </a>
+                </li>
+              )}
+              {syndication.twitter  && (
+                <li>
+                  <a href={syndication.twitter}  class="text-gruv-blue-b hover:underline" rel="noopener">
+                    Twitter/X
+                  </a>
+                </li>
+              )}
+            </ul>
+          </aside>
+        )}
+      </article>
+
+      <!-- ── Sidebar: ToC ──────────────────────────────────── -->
+      {showToc && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-8">
+            <p class="text-xs text-gruv-fg4 uppercase tracking-widest mb-3">On this page</p>
+            <nav>
+              <ul class="flex flex-col gap-1">
+                {tocHeadings.map((h) => (
+                  <li class={h.depth === 3 ? 'pl-3' : ''}>
+                    <a
+                      href={`#${h.slug}`}
+                      class="text-sm text-gruv-fg4 hover:text-gruv-blue-b transition-colors leading-snug block py-0.5"
+                    >
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </aside>
+      )}
+
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import NoteLayout from '@/layouts/NoteLayout.astro';
+import { buildSlugMap } from '@/lib/wikilinks';
+import { buildBacklinkIndex } from '@/lib/backlinks';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes', (n) => !n.data.draft);
+
+  // Build the slug map once for backlinks and graph data.
+  // The remark plugin builds its own slug map from the filesystem — see wikilinks.ts.
+  const slugMap   = buildSlugMap(notes);
+  const backlinks = buildBacklinkIndex(notes, slugMap);
+
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props:  {
+      note,
+      backlinks: backlinks.get(note.id) ?? [],
+    },
+  }));
+}
+
+const { note, backlinks } = Astro.props;
+const { Content, headings } = await render(note);
+---
+<NoteLayout note={note} headings={headings} backlinks={backlinks}>
+  <Content />
+</NoteLayout>

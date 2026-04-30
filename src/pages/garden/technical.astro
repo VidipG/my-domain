@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '@/layouts/PageLayout.astro';
+import NoteCard from '@/components/garden/NoteCard.astro';
+
+const notes = (await getCollection('notes', (n) => !n.data.draft && n.data.type === 'technical'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<PageLayout title="Technical — Garden" description="In-depth technical notes on systems, architecture, and programming.">
+  <main style="max-width:48rem; margin:0 auto; padding:4rem 3rem;">
+    <nav class="text-sm mb-6">
+      <a href="/" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Home</a>
+      <span class="text-gruv-bg3 mx-2">/</span>
+      <a href="/garden" class="text-gruv-fg4 hover:text-gruv-blue-b transition-colors">Garden</a>
+      <span class="text-gruv-bg3 mx-2">/</span>
+      <span class="text-gruv-green-b">Technical</span>
+    </nav>
+
+    <h1 class="text-4xl font-bold text-gruv-fg mb-2">Technical Notes</h1>
+    <p class="text-gruv-fg4 text-lg mb-10">
+      In-depth notes on distributed systems, architecture, and programming. {notes.length} entries.
+    </p>
+
+    <ul class="flex flex-col gap-3">
+      {notes.map((note) => <NoteCard note={note} />)}
+    </ul>
+
+    {notes.length === 0 && (
+      <p class="text-gruv-fg4">No technical notes yet — check back soon.</p>
+    )}
+  </main>
+</PageLayout>
