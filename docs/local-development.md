@@ -76,17 +76,7 @@ Optional fields:
 ```yaml
 aliases: ["Alt Title", "Another Name"]   # extra titles [[wikilinks]] can resolve to
 draft: true                              # hides from listings and RSS (default: false)
-syndication:
-  bluesky: https://bsky.app/...          # written back by scripts/syndicate.ts
 ```
-
-**Maturity guide**
-
-| Stage | Meaning |
-|-------|---------|
-| `seedling` | Rough idea, early notes — may be incomplete |
-| `budding` | Developing, partially formed |
-| `evergreen` | Complete, considered, stable — ready to share |
 
 ### 3. Write the content
 
@@ -159,7 +149,7 @@ The graph data (`nodes` + `edges` JSON) is serialized into the page's HTML at bu
 
 ## Draft Notes
 
-Set `draft: true` in frontmatter to exclude a note from all listings, RSS, and the knowledge graph. The page itself is still built (useful for proofreading via the direct URL), but it won't be discoverable through the site.
+Set `draft: true` in frontmatter to exclude a note from all listings and the knowledge graph. The page itself is still built (useful for proofreading via the direct URL), but it won't be discoverable through the site.
 
 ```yaml
 draft: true
@@ -189,7 +179,7 @@ The dev server works without them (system fonts fall back gracefully). The build
 2. Create src/content/notes/<type>/<slug>.md
 3. Write frontmatter + content
 4. Add [[wikilinks]] to connect notes
-5. Visit http://localhost:4321/garden/<type>/<slug>/ to preview
+5. Visit http://localhost:4321/posts/<type>/<slug>/ to preview
 6. Check backlinks panel and graph on homepage
 7. pnpm check                        # verify no type errors
 8. git add / commit / push → Cloudflare Pages auto-deploys

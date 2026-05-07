@@ -3,11 +3,9 @@ import { glob } from 'astro/loaders';
 import { z } from 'zod';
 
 // ── Shared enums ───────────────────────────────────────────────
-export const NOTE_TYPES    = ['til', 'technical', 'freeform'] as const;
-export const NOTE_MATURITY = ['seedling', 'budding', 'evergreen'] as const;
+export const NOTE_TYPES = ['til', 'technical', 'freeform'] as const;
 
-export type NoteType    = (typeof NOTE_TYPES)[number];
-export type NoteMaturity = (typeof NOTE_MATURITY)[number];
+export type NoteType = (typeof NOTE_TYPES)[number];
 
 // ── Note schema ────────────────────────────────────────────────
 const noteSchema = z.object({
@@ -26,14 +24,6 @@ const noteSchema = z.object({
   /** Content format / depth */
   type: z.enum(NOTE_TYPES),
 
-  /**
-   * How developed the note is.
-   * seedling  → rough idea, early notes
-   * budding   → developing, partially formed
-   * evergreen → complete, considered, stable
-   */
-  maturity: z.enum(NOTE_MATURITY).default('seedling'),
-
   /** Topic tags — used for graph clustering and filter pages */
   tags: z.array(z.string()).default([]),
 
@@ -46,18 +36,6 @@ const noteSchema = z.object({
 
   /** When true, excluded from all listings, RSS, and graph */
   draft: z.boolean().default(false),
-
-  /**
-   * POSSE syndication URLs — written back by scripts/syndicate.ts
-   * after the note is published to each platform.
-   */
-  syndication: z
-    .object({
-      bluesky:  z.url().optional(),
-      mastodon: z.url().optional(),
-      twitter:  z.url().optional(),
-    })
-    .optional(),
 });
 
 export type NoteData = z.infer<typeof noteSchema>;

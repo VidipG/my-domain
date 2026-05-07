@@ -8,16 +8,13 @@ interface Props {
   canonical?: string;
   /** OG image URL */
   ogImage?: string;
-  /** Suppress the default RSS autodiscovery link */
-  noRss?: boolean;
 }
 
 const {
   title,
-  description = 'A digital garden of notes, ideas, and things I\'m learning.',
+  description = 'Notes, ideas, and things I\'m learning.',
   canonical = Astro.url.href,
   ogImage,
-  noRss = false,
 } = Astro.props;
 
 const siteName = 'vidip.dev';
@@ -55,16 +52,6 @@ const fullTitle = title === siteName ? title : `${title} — ${siteName}`;
     <!-- Fonts — preload the two subset WOFF2 files -->
     <link rel="preload" href="/fonts/inter-var.woff2"    as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jb-mono-var.woff2"  as="font" type="font/woff2" crossorigin />
-
-    <!-- RSS autodiscovery -->
-    {!noRss && (
-      <link
-        rel="alternate"
-        type="application/rss+xml"
-        title={`${siteName} — Garden RSS`}
-        href="/rss.xml"
-      />
-    )}
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />

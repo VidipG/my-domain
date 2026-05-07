@@ -13,7 +13,7 @@ const { backlinks } = Astro.props;
 const TYPE_COLOR: Record<string, string> = {
   til:       'text-gruv-blue-b',
   technical: 'text-gruv-green-b',
-  longform:  'text-gruv-yellow-b',
+  freeform:  'text-gruv-yellow-b',
 };
 ---
 <aside class="mt-12 pt-6 border-t border-gruv-bg2">
@@ -24,7 +24,7 @@ const TYPE_COLOR: Record<string, string> = {
     {backlinks.map((note) => (
       <li>
         <a
-          href={`/garden/${note.id}/`}
+          href={`/posts/${note.id}/`}
           class="group flex flex-col gap-0.5 rounded border border-gruv-bg2 bg-gruv-bg1 px-4 py-3 hover:border-gruv-bg3 transition-colors"
         >
           <span class="flex items-center gap-2">

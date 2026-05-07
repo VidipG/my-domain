@@ -12,7 +12,7 @@
  * not added — the explicit link takes precedence.
  */
 
-import type { NoteType, NoteMaturity } from '../content.config.ts';
+import type { NoteType } from '../content.config.ts';
 import type { SlugMap } from './wikilinks.ts';
 
 // ── Types ──────────────────────────────────────────────────────
@@ -40,7 +40,6 @@ export interface GraphData {
   edges: GraphEdge[];
 }
 
-// Internal unified shape — maturity is optional (projects don't have it)
 type AnyEntry = {
   id:    string;
   body?: string;
@@ -49,7 +48,7 @@ type AnyEntry = {
     tags:     string[];
     type:     NodeKind;
   };
-  urlPrefix: string; // '/garden/' or '/projects/'
+  urlPrefix: string; // '/posts/' or '/projects/'
 };
 
 // ── Implementation ─────────────────────────────────────────────
@@ -60,7 +59,7 @@ export function buildGraphData(
   notes: {
     id: string;
     body?: string;
-    data: { title: string; tags: string[]; type: NoteType; maturity: NoteMaturity };
+    data: { title: string; tags: string[]; type: NoteType };
   }[],
   slugMap: SlugMap,
   projects: {
@@ -74,7 +73,7 @@ export function buildGraphData(
     id:        n.id,
     body:      n.body,
     data:      { title: n.data.title, tags: n.data.tags, type: n.data.type },
-    urlPrefix: '/garden/',
+    urlPrefix: '/posts/',
   }));
 
   const projectEntries: AnyEntry[] = projects.map((p) => ({

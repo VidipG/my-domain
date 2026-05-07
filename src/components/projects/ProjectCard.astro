@@ -14,11 +14,10 @@ const formatted = date.toLocaleDateString('en-US', {
   month: 'short',
 });
 ---
-<li style="width:100%;">
+<li class="w-full">
   <a
     href={`/projects/${project.id}/`}
-    class="group block rounded-[var(--radius)] px-4 py-3 transition-shadow"
-    style="box-shadow: 0 1px 3px rgba(0,0,0,0.25); width:100%; box-sizing:border-box;"
+    class="group block w-full rounded-[var(--radius)] px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
   >
     <div class="flex items-center gap-2 mb-1.5 text-xs">
       <time datetime={date.toISOString()} class="text-gruv-fg4 font-mono">{formatted}</time>

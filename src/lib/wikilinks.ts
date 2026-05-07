@@ -2,7 +2,7 @@
  * Wikilink remark plugin
  *
  * Parses [[Note Title]] and [[Note Title|Display Text]] syntax in markdown,
- * resolving them to internal garden links.
+ * resolving them to internal post links.
  *
  * ## Design
  *
@@ -163,7 +163,7 @@ export function wikilinkPlugin(opts: WikilinkPluginOptions) {
         if (resolvedId) {
           newNodes.push({
             type:     'link',
-            url:      `/garden/${resolvedId}/`,
+            url:      `/posts/${resolvedId}/`,
             title:    null,
             children: [{ type: 'text', value: display }],
           });

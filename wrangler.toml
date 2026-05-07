@@ -1,0 +1,11 @@
+name                   = "my-domain"
+compatibility_date     = "2026-01-01"
+pages_build_output_dir = "dist"
+
+# Cloudflare Pages specific config
+[env.production]
+# Add KV namespaces, R2 buckets, or other bindings here when needed.
+# Example:
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id      = "your-namespace-id"

@@ -1,8 +1,4 @@
 ---
-/**
- * PageLayout — generic page chrome (header nav, main, footer).
- * Wraps BaseLayout. Use for non-note pages: garden index, resume, uses, etc.
- */
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -10,7 +6,6 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
-  noRss?: boolean;
 }
 
 const props = Astro.props;

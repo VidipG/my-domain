@@ -1,5 +1,4 @@
 ---
-import MaturityBadge from './MaturityBadge.astro';
 import TagBadge from './TagBadge.astro';
 import type { CollectionEntry } from 'astro:content';
 
@@ -10,7 +9,7 @@ interface Props {
 }
 
 const { note, compact = false } = Astro.props;
-const { title, description, type, maturity, tags, date } = note.data;
+const { title, description, type, tags, date } = note.data;
 
 const tended = date.toLocaleDateString('en-US', {
   year:  'numeric',
@@ -24,18 +23,16 @@ const TYPE_COLOR: Record<string, string> = {
   freeform:  'text-gruv-yellow-b',
 };
 ---
-<li style="width:100%;">
+<li class="w-full">
   <a
-    href={`/garden/${note.id}/`}
-    class="group block rounded-[var(--radius)] px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
-    style="box-shadow: 0 1px 3px rgba(0,0,0,0.25); width:100%; box-sizing:border-box;"
+    href={`/posts/${note.id}/`}
+    class="group block w-full rounded-[var(--radius)] px-4 py-3 shadow-sm hover:shadow-md transition-shadow"
   >
-    <!-- Top row: type label + maturity + date -->
+    <!-- Top row: type label + date -->
     <div class="flex items-center gap-2 mb-1.5 text-xs">
       <span class={`font-mono uppercase tracking-widest ${TYPE_COLOR[type] ?? 'text-gruv-fg4'}`}>
         {type}
       </span>
-      <MaturityBadge maturity={maturity} />
       <time datetime={date.toISOString()} class="ml-auto text-gruv-fg4">
         {tended}
       </time>

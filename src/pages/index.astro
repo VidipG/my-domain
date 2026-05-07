@@ -12,27 +12,25 @@ const graphData = buildGraphData(notes, slugMap, projects);
 ---
 <BaseLayout
   title="vidip.dev"
-  description="Software engineer. Writer. Builder. Digital garden of notes and ideas."
-  noRss={false}
+  description="Software engineer. Writer. Builder. Notes and ideas."
 >
-  <main style="display:grid; grid-template-columns:1fr 1fr; min-height:100dvh;">
+  <main class="grid grid-cols-1 lg:grid-cols-2 min-h-dvh">
 
     <!-- ── Left: Identity ──────────────────────────────────── -->
-    <section style="display:flex; flex-direction:column; justify-content:center; padding:5rem 4rem 5rem 5rem;">
+    <section class="flex flex-col justify-center px-6 py-16 sm:px-12 lg:py-20 lg:pr-16 lg:pl-20">
 
-      <h1 class="text-5xl font-bold text-gruv-fg leading-none mb-4">
+      <h1 class="text-4xl sm:text-5xl font-bold text-gruv-fg leading-none mb-4">
         Vidip
       </h1>
 
-      <p class="text-gruv-fg4 text-xl mb-10 max-w-xs leading-relaxed">
+      <p class="text-gruv-fg4 text-lg sm:text-xl mb-10 max-w-xs leading-relaxed">
         Software engineer. I write about distributed systems, the web, and how I think about building things.
       </p>
 
-      <nav aria-label="Primary navigation" style="display:flex; flex-direction:column; gap:0.75rem;">
+      <nav aria-label="Primary navigation" class="flex flex-col gap-3">
         {[
-          { href: '/garden',   label: 'Digital Garden', sub: 'Notes & ideas' },
-          { href: '/projects', label: 'Projects',       sub: 'Things I\'ve built' },
-          { href: '/uses',     label: 'Uses',           sub: 'Tools & setup' },
+          { href: '/posts',    label: 'Posts',    sub: 'Notes & ideas' },
+          { href: '/projects', label: 'Projects', sub: 'Things I\'ve built' },
         ].map(({ href, label, sub }) => (
           <a
             href={href}
@@ -48,7 +46,7 @@ const graphData = buildGraphData(notes, slugMap, projects);
       </nav>
 
       <!-- Social icons -->
-      <div style="display:flex; align-items:center; gap:1.25rem; margin-top:3rem;">
+      <div class="flex items-center gap-5 mt-12">
         <!-- Email -->
         <a href="mailto:vg@vidipg.com" aria-label="Email" class="text-gruv-fg4 hover:text-gruv-fg transition-colors">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -83,9 +81,9 @@ const graphData = buildGraphData(notes, slugMap, projects);
 
     </section>
 
-    <!-- ── Right: Knowledge Graph ──────────────────────────── -->
+    <!-- ── Right: Knowledge Graph (desktop only) ──────────────── -->
     <section
-      style="display:flex; align-items:center; justify-content:center; padding:2rem; border-left:1px solid var(--color-gruv-bg2);"
+      class="hidden lg:flex items-center justify-center p-8 border-l border-gruv-bg2"
       aria-label="Knowledge graph"
     >
       <KnowledgeGraph data={graphData} width={560} height={480} />

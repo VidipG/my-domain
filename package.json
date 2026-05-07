@@ -11,21 +11,20 @@
   },
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
-    "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
-    "@tailwindcss/vite": "^4.2.4",
-    "astro": "^6.1.10",
-    "force-graph": "^1.51.4",
-    "tailwindcss": "^4.2.4",
-    "zod": "^4.3.6"
+    "@astrojs/sitemap": "3.7.2",
+    "@tailwindcss/vite": "4.2.4",
+    "astro": "6.1.10",
+    "force-graph": "1.51.4",
+    "tailwindcss": "4.2.4",
+    "zod": "4.3.6"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@types/mdast": "^4.0.4",
-    "prettier": "^3.8.3",
-    "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^6.0.3",
-    "unist-util-visit": "^5.1.0",
-    "wrangler": "^4.86.0"
+    "@astrojs/check": "0.9.9",
+    "@types/mdast": "4.0.4",
+    "prettier": "3.8.3",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "6.0.3",
+    "unist-util-visit": "5.1.0",
+    "wrangler": "4.86.0"
   }
 }
